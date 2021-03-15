@@ -1,6 +1,8 @@
 package io.github;
 
+import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class User {
@@ -21,8 +23,15 @@ public class User {
     }
 
     public boolean isIndirectFriendOf(User other) {
-        for (User friend : other.friends) {
-            if (friend.isDirectFriendOf(this)) return true;
+        Set<User> visited = new HashSet<>();
+        Deque<User> frontier = new LinkedList<>();
+        frontier.add(this);
+        while (!frontier.isEmpty()) {
+            User user = frontier.removeFirst();
+            if (user.equals(other)) return true;
+            if (visited.add(user)) {
+                frontier.addAll(user.friends);
+            }
         }
         return false;
     }
